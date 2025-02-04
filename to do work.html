@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List with Local Storage</title>
+    <link rel="stylesheet" href="style_to_do_work.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #8f8a8a;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        input[type="text"] {
+            width: calc(100% - 40px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #f8f9fa;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        li button {
+            background-color: #dc3545;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        li button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>To-Do List</h1>
+        <input type="text" id="taskInput" placeholder="Enter your task here">
+        <button onclick="addTask()">Add Task</button>
+
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        // Load saved tasks from localStorage
+        document.addEventListener("DOMContentLoaded", loadTasks);
+
+        function addTask() {
+            const taskInput = document.getElementById("taskInput");
+            const task = taskInput.value.trim();
+
+            if (task !== "") {
+                // Add the task to localStorage
+                let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+                tasks.push(task);
+                localStorage.setItem("tasks", JSON.stringify(tasks));
+
+                // Clear the input field and refresh the task list
+                taskInput.value = "";
+                loadTasks();
+            }
+        }
+
+        function loadTasks() {
+            const taskList = document.getElementById("taskList");
+            taskList.innerHTML = "";  // Clear existing tasks
+
+            // Get tasks from localStorage
+            const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+            tasks.forEach((task, index) => {
+                const li = document.createElement("li");
+                li.textContent = task;
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.onclick = function() {
+                    deleteTask(index);
+                };
+
+                li.appendChild(deleteButton);
+                taskList.appendChild(li);
+            });
+        }
+
+        function deleteTask(index) {
+            // Get tasks from localStorage
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+            // Remove the task from the array
+            tasks.splice(index, 1);
+
+            // Save the updated tasks back to localStorage
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+
+            // Reload the task list
+            loadTasks();
+        }
+    </script>
+
+</body>
+</html>
